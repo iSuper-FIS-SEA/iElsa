@@ -5,7 +5,7 @@ import (
 	"net/http"
 )
 
-func Home(w http.ResponseWriter, r *http.Request) error {
+func HomeHandler(w http.ResponseWriter, r *http.Request) error {
 	b, _ := json.Marshal(map[string]string{"text": "hello"})
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(b)

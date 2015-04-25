@@ -1,6 +1,7 @@
 package controller
 
 import (
+	home "../controller/home"
 	"github.com/gorilla/mux"
 	"log"
 	"net/http"
@@ -13,7 +14,7 @@ func RegisterHandlers() {
 	log.Printf("Go Baby go...")
 
 	r := mux.NewRouter()
-	r.HandleFunc(PathPrefix, errorHandler(Home)).Methods("GET")
+	r.HandleFunc(PathPrefix+"home", errorHandler(home.HomeHandler)).Methods("GET")
 	http.Handle(PathPrefix, r)
 }
 
