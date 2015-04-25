@@ -1,15 +1,15 @@
 package main
 
 import (
-	"fmt"
+	rount "./controller"
 	"log"
 	"net/http"
 )
 
 func main() {
+	rount.RegisterHandlers()
 	http.Handle("/", http.FileServer(http.Dir("webapp")))
 
-	log.Printf("Go Baby go ...")
 	err := http.ListenAndServe(":8080", nil)
-	fmt.Println(err.Error())
+	log.Printf(err.Error())
 }
