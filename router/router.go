@@ -7,7 +7,7 @@ import (
 	"net/http"
 )
 
-const PathPrefix = "/iworkloader/"
+const PathPrefix = "/iElsa/"
 
 // Register router
 func RegisterHandlers() {
