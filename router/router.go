@@ -14,13 +14,9 @@ func RegisterHandlers() {
 	log.Printf("Go Baby go...")
 
 	r := mux.NewRouter()
-	r.HandleFunc(PathPrefix+"workorder", errorHandler(workorder.List)).Methods("GET")
-	r.HandleFunc(PathPrefix+"workorder/"+"{hdnum}", errorHandler(workorder.GetHdNum)).Methods("GET")
+	r.HandleFunc(PathPrefix+"workorder/"+"{hdnum}", errorHandler(workorder.List)).Methods("GET")
 	http.Handle(PathPrefix, r)
 }
-
-type badRequest struct{ error }
-type notFound struct{ error }
 
 // Embed HandleFunc with errorHandler
 func errorHandler(f func(w http.ResponseWriter, r *http.Request) error) http.HandlerFunc {
@@ -32,10 +28,10 @@ func errorHandler(f func(w http.ResponseWriter, r *http.Request) error) http.Han
 			return
 		}
 
-		switch err.(type) {
-		case badRequest:
+		switch err.Error() {
+		case "badRequest":
 			http.Error(w, err.Error(), http.StatusBadRequest)
-		case notFound:
+		case "notFound":
 			http.Error(w, "Not found", http.StatusNotFound)
 		default:
 			log.Println(err)
