@@ -7,7 +7,6 @@
 body {
 	-webkit-font-smoothing:antialiased;
 	width: 80%;
-	max-width: 480px;
 	margin: 0 auto;
 	background: #f8f8f8;
 }
@@ -80,4 +79,9 @@ li.done > .checkbox {
 }
 .spinner.working {
 	display: block;
+}
+
+.pull-right {
+    position: absolute;
+    right: 10%;
 }
