@@ -17,6 +17,7 @@ app.controller('OrderCtrl', ['$scope','$http',
             $http.get('/iElsa/workorder/'+$scope.workorder).
                 error(logError).
                 success(function(data) { 
+                    console.log(data);
                     $scope.orderlist = data.Workorder; 
                     $scope.working = false;
                 });
