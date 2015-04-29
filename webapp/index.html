@@ -2,32 +2,84 @@
 <html lang="en" ng-app="index">
 
 <head>
-<title>iElsa</title>
-<script src='static/lib/angular/angular.min.js'></script>
+<title>iElsa: D2D Data Searcher</title>
 <meta name='viewport' content='width=device-width, initial-scale=1.0'>
-<link href='http://fonts.googleapis.com/css?family=Roboto:400,300' rel='stylesheet' type='text/css'>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<link rel="shortcut icon" href="static/img/favicon.ico" type="image/x-icon">
+
+<script src='static/lib/angular/angular.min.js'></script>
 <script src='static/js/app.js'></script>
 <link rel='stylesheet' href='static/css/app.css'>
 </head>
 
 <body>
 <div class='container' ng-controller="OrderCtrl">
-    <h1 class='charcoal rounded-box'>WORK ORDER SEARCH</h1>
+    <h1 class='charcoal rounded-box'>Data Searcher</h1>
 
-    <form>
-        <div class='pull-right'>
-            <input type='text' class='rounded-box' placeholder='insert work order here' ng-model='workorder'>
-            <button class='grey rounded-box' ng-click='search()' ng-disabled='working'>Search</button>
+    <div class='rounded-box pull-right'>
+        <form>
+            <div ng-init="searchtype='hd num'">
+                <input type='radio' value='hd num' ng-model='searchtype'> Hd num
+                <input type='radio' value='zip name' ng-model='searchtype'> File Name .zip
+                <input type='radio' value='work order' ng-model='searchtype'> Work Order
+                <input type='text' class='rounded-box' placeholder="insert {{ searchtype }} here" ng-model='dig'>
+                <button class='grey rounded-box' ng-click='search()' ng-disabled='working'>Search</button>
+            </div>
+        </form>
+    </div>
+
+    <center>
+        <div class='clearfix' ng-show='showed'>
+            Filter: 
+            <input type='text' class='rounded-box' placeholder='hd num' ng-model='text.Hdnum'>
+            <span class='pull-right'>Total: {{ orderlist.length | number }} records</span>
         </div>
-    </form>
+    </center>
 
-    <ul class='grey rounded-box'>
-        <li ng-repeat='o in orderlist'>
-        <span class='checkbox'></span>{{o.Hdnum}}
-        </li>
-    </ul>
+    <div class='clearfix rounded-box' ng-show='notfound'>
+        <h2 class='msg'><strong> Data Not Found, Honey!! </strong></h2>
+    </div>
 
-    <img class='spinner' src='spinner.gif' alt='Loading' ng-class='{working: working}'/>
+    <table class='grey rounded-box' ng-show='showed'>
+        <thead>
+            <tr>
+                <th>HD NUM</th>
+                <th>HGA PART NUM</th>
+                <th>LOAD DATE</th>
+                <th>PARM ID</th>
+                <th>RADIUS</th>
+                <th>REF RADIUS</th>
+                <th>TMWI</th>
+                <th>TSRT PART NUM</th> 
+                <th>TST DATE</th>
+                <th>WORK ORDER</th>
+                <th>FILE ZIP NAME</th>
+            </tr>
+        </thead>
+        <tbody>
+        <tr ng-repeat="o in orderlist | filter: text">
+            <td>{{ o.Hdnum }}</td>
+            <td>{{ o.HgaPartNum.String }}</td>
+            <td>{{ o.LoadDate | date: 'MMM d, y hh:mm:ss' }}</td>
+            <td>{{ o.ParmId.String }}</td>
+            <td>{{ o.Radius }}</td>
+            <td ng-if="o.RefRadius.Float64 == 0"> NULL </td>
+            <td ng-if="o.RefRadius.Float64 != 0">{{ o.RefRadius.Float64 }}</td>
+            <td>{{ o.Tmwi.String }}</td>
+            <td>{{ o.TsrtPartNum.String }}</td>
+            <td>{{ o.TstDate | date: 'MMM d, y hh:mm:ss' }}</td>
+            <td>{{ o.WorkOrder.String }}</td>
+            <td>{{ o.Zipname.String }}</td>
+        </tr>
+        </tbody>
+    </table>
+
+    <center>
+        <div class='clearfix'>
+            <br />
+            <img class='spinner' src='static/img/elsa_1.gif' alt='Loading' ng-class='{working: working}'/>
+        </div>
+    </center>
 </div>
 </body>
 </html>

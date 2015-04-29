@@ -14,7 +14,9 @@ func RegisterHandlers() {
 	log.Printf("Go Baby go...")
 
 	r := mux.NewRouter()
-	r.HandleFunc(PathPrefix+"workorder/"+"{hdnum}", errorHandler(workorder.List)).Methods("GET")
+	r.HandleFunc(PathPrefix+"api/hdnum/"+"{hdnum}", errorHandler(workorder.HdnumList)).Methods("GET")
+	r.HandleFunc(PathPrefix+"api/order/"+"{order}", errorHandler(workorder.OrderList)).Methods("GET")
+	r.HandleFunc(PathPrefix+"api/file/"+"{file}", errorHandler(workorder.FileList)).Methods("GET")
 	http.Handle(PathPrefix, r)
 }
 

@@ -10,14 +10,15 @@ import (
 type Workorder struct {
 	Hdnum       string
 	TstDate     time.Time
-	TsrtPartNum string
-	HgaPartNum  string
+	TsrtPartNum sql.NullString
+	HgaPartNum  sql.NullString
 	Radius      string
-	Tmwi        string
+	Tmwi        sql.NullString
 	LoadDate    time.Time
-	ParmId      string
-	RefRadius   string
-	WorkOrder   string
+	ParmId      sql.NullString
+	RefRadius   sql.NullFloat64
+	WorkOrder   sql.NullString
+	Zipname     sql.NullString
 }
 
 type OrderManager struct {
@@ -37,11 +38,11 @@ func NewWorkorderManager() *OrderManager {
 	return &OrderManager{}
 }
 
-func (w *OrderManager) Find(hdnum string) []*Workorder {
+func (w *OrderManager) FindHdnum(hdnum string) []*Workorder {
 	db := connection()
 	defer db.Close()
 
-	rows, err := db.Query("select hd_num,tst_date,tstr_part_num,hga_part_num,radius,tmwi,load_date,parm_id,ref_radius,work_order from data_he_d2d where hd_num = :1", hdnum)
+	rows, err := db.Query("select hd_num,tst_date,tstr_part_num,hga_part_num,radius,tmwi,load_date,parm_id,ref_radius,work_order,s_zipname from data_he_d2d where hd_num = :1", hdnum)
 	if err != nil {
 		log.Println(err)
 		return nil
@@ -50,7 +51,47 @@ func (w *OrderManager) Find(hdnum string) []*Workorder {
 
 	for rows.Next() {
 		o := new(Workorder)
-		rows.Scan(&o.Hdnum, &o.TstDate, &o.TsrtPartNum, &o.HgaPartNum, &o.Radius, &o.Tmwi, &o.LoadDate, &o.ParmId, &o.RefRadius, &o.WorkOrder)
+		rows.Scan(&o.Hdnum, &o.TstDate, &o.TsrtPartNum, &o.HgaPartNum, &o.Radius, &o.Tmwi, &o.LoadDate, &o.ParmId, &o.RefRadius, &o.WorkOrder, &o.Zipname)
+		w.workorders = append(w.workorders, clone(o))
+	}
+
+	return w.workorders
+}
+
+func (w *OrderManager) FindOrder(order string) []*Workorder {
+	db := connection()
+	defer db.Close()
+
+	rows, err := db.Query("select hd_num,tst_date,tstr_part_num,hga_part_num,radius,tmwi,load_date,parm_id,ref_radius,work_order,s_zipname from data_he_d2d where work_order = :1", order)
+	if err != nil {
+		log.Println(err)
+		return nil
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		o := new(Workorder)
+		rows.Scan(&o.Hdnum, &o.TstDate, &o.TsrtPartNum, &o.HgaPartNum, &o.Radius, &o.Tmwi, &o.LoadDate, &o.ParmId, &o.RefRadius, &o.WorkOrder, &o.Zipname)
+		w.workorders = append(w.workorders, clone(o))
+	}
+
+	return w.workorders
+}
+
+func (w *OrderManager) FindFile(zfile string) []*Workorder {
+	db := connection()
+	defer db.Close()
+
+	rows, err := db.Query("select hd_num,tst_date,tstr_part_num,hga_part_num,radius,tmwi,load_date,parm_id,ref_radius,work_order,s_zipname from data_he_d2d where s_zipname like :1", zfile+"%")
+	if err != nil {
+		log.Println(err)
+		return nil
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		o := new(Workorder)
+		rows.Scan(&o.Hdnum, &o.TstDate, &o.TsrtPartNum, &o.HgaPartNum, &o.Radius, &o.Tmwi, &o.LoadDate, &o.ParmId, &o.RefRadius, &o.WorkOrder, &o.Zipname)
 		w.workorders = append(w.workorders, clone(o))
 	}
 
